@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lildistrillm-api-gateway
+  labels:
+    app: lildistrillm-api-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lildistrillm-api-gateway
+  template:
+    metadata:
+      labels:
+        app: lildistrillm-api-gateway
+      spec:
+        containers:
+          - name: api-gateway
+            image: lildistrillm/api-gateway:latest
+            ports:
+            - containerPort: 8080
+            env:
+            - name: REDIS_URL
+              value: "redis://redis-service:6379"
+            - name: SPARK_MASTER
+              value: "spark://spark-master:7077"
+            resources:
+              requests:
+                memory: "128Mi"
+                cpu: "100m"
+              limits:
+                memory: "512Mi"
+                cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: distrillm-api-service
+spec:
+  selector:
+    app: distrillm-api-gateway
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
