@@ -129,5 +129,5 @@ In Kubernetes, each component is defined separately:
 🖥️ Cluster Layer (Kubernetes Cluster)
 ```
 
-```
+
 
